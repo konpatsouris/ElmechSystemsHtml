@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Διαχείριση Αποθήκης — ELMECH SYSTEMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:       #1a3a5f;
+      --navy-dark:  #112840;
+      --navy-mid:   #254e80;
+      --navy-light: #3a6fa8;
+      --accent:     #e8a020;
+      --accent-dim: #b87d12;
+      --accent-bg:  rgba(232,160,32,.1);
+      --danger:     #c0392b;
+      --danger-bg:  #fdf0ee;
+      --success:    #1e7e4a;
+      --success-bg: #eaf5ee;
+      --warn:       #b87d12;
+      --warn-bg:    #fff8ec;
+      --grey-bg:    #eef1f5;
+      --grey-bdr:   #d8dfe8;
+      --grey-mid:   #8a9ab0;
+      --white:      #ffffff;
+      --txt:        #1c2b3a;
+      --txt-soft:   #5a6b7c;
+      --r:          6px;
+      --sh-sm:      0 1px 4px rgba(26,58,95,.1);
+      --sh-md:      0 6px 24px rgba(26,58,95,.13);
+      --t:          .22s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--grey-bg);
+      color: var(--txt);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Bar ── */
+    .topbar {
+      background: var(--navy-dark);
+      border-bottom: 3px solid var(--accent);
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: var(--white);
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .logo em {
+      font-style: normal;
+      font-size: .62rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .topbar-module {
+      margin-left: auto;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.45);
+    }
+    .topbar-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: var(--r);
+      background: rgba(255,255,255,.07);
+      font-size: .74rem;
+      color: rgba(255,255,255,.65);
+    }
+    .topbar-user svg { color: var(--accent); }
+
+    /* ── Layout ── */
+    .layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 0;
+      min-height: 0;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--white);
+      border-right: 1px solid var(--grey-bdr);
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - 63px);
+    }
+    .sidebar-header {
+      padding: 20px 20px 14px;
+      border-bottom: 1px solid var(--grey-bdr);
+    }
+    .sidebar-header h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header p {
+      font-size: .72rem;
+      color: var(--txt-soft);
+      margin-top: 4px;
+    }
+    .badge-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: .68rem;
+      font-weight: 700;
+    }
+    .order-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .order-item {
+      padding: 12px 14px;
+      border-radius: var(--r);
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all var(--t);
+      margin-bottom: 4px;
+    }
+    .order-item:hover { background: var(--grey-bg); border-color: var(--grey-bdr); }
+    .order-item.selected { background: rgba(26,58,95,.06); border-color: var(--navy-light); }
+    .order-item.done { opacity: .6; }
+    .oi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .oi-id {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: .04em;
+    }
+    .oi-status {
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .status-pending   { background: var(--accent-bg);  color: var(--accent-dim); }
+    .status-done      { background: var(--success-bg); color: var(--success); }
+    .status-error     { background: var(--danger-bg);  color: var(--danger); }
+    .oi-customer {
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--txt);
+    }
+    .oi-meta {
+      font-size: .72rem;
+      color: var(--txt-soft);
+      margin-top: 3px;
+      display: flex;
+      gap: 10px;
+    }
+    .oi-meta span {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* ── Main Content ── */
+    .main { display: flex; flex-direction: column; }
+    .main-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--grey-mid);
+      padding: 40px;
+    }
+    .main-empty svg { width: 48px; height: 48px; opacity: .35; }
+    .main-empty p {
+      font-size: .85rem;
+      text-align: center;
+      max-width: 260px;
+      line-height: 1.6;
+    }
+
+    /* ── Detail Header ── */
+    .detail-header {
+      padding: 20px 28px 16px;
+      background: var(--white);
+      border-bottom: 1px solid var(--grey-bdr);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .dh-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r);
+      background: rgba(26,58,95,.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+    .dh-info h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: .03em;
+    }
+    .dh-info p { font-size: .77rem; color: var(--txt-soft); margin-top: 3px; }
+    .dh-badges { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .dh-badge {
+      font-size: .67rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .badge-simple { background: rgba(26,58,95,.09); color: var(--navy); }
+    .badge-date   { background: var(--grey-bg); color: var(--txt-soft); }
+    .badge-items  { background: var(--accent-bg); color: var(--accent-dim); }
+    .dh-actions { margin-left: auto; display: flex; gap: 8px; align-items: flex-start; }
+
+    /* ── Customer Card ── */
+    .customer-bar {
+      margin: 16px 28px;
+      padding: 14px 18px;
+      background: var(--grey-bg);
+      border: 1px solid var(--grey-bdr);
+      border-radius: var(--r);
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+    .cb-field { display: flex; flex-direction: column; gap: 2px; }
+    .cb-lbl { font-size: .67rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--grey-mid); }
+    .cb-val { font-size: .86rem; font-weight: 500; color: var(--txt); }
+
+    /* ── Products Table ── */
+    .products-section {
+      padding: 0 28px 12px;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--grey-bdr);
+    }
+
+    /* ── Product Row ── */
+    .prod-rows { display: flex; flex-direction: column; gap: 8px; }
+    .prod-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 80px 1fr 34px;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 14px;
+      background: var(--white);
+      border: 1.5px solid var(--grey-bdr);
+      border-radius: var(--r);
+      transition: border-color var(--t);
+    }
+    .prod-row.avail  { border-left: 3px solid var(--success); background: var(--success-bg); }
+    .prod-row.short  { border-left: 3px solid var(--danger);  background: var(--danger-bg); }
+    .prod-row.invalid { border-left: 3px solid var(--accent);  background: var(--warn-bg); }
+    .pr-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--grey-mid);
+      text-align: center;
+    }
+    .pr-code { font-family: 'Barlow Condensed', sans-serif; font-size: .95rem; font-weight: 700; color: var(--navy); letter-spacing: .04em; }
+    .pr-code small { display: block; font-family: 'Barlow', sans-serif; font-size: .72rem; font-weight: 400; color: var(--txt-soft); letter-spacing: 0; margin-top: 1px; }
+    .pr-qty {
+      font-size: .82rem;
+      color: var(--txt);
+      text-align: center;
+    }
+    .pr-qty span { font-weight: 600; color: var(--navy); }
+    .avail-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+    .av-btn {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1.5px solid var(--grey-bdr);
+      background: var(--white);
+      color: var(--txt-soft);
+      transition: all var(--t);
+    }
+    .av-btn:hover { transform: translateY(-1px); }
+    .av-btn.active-avail { background: var(--success); border-color: var(--success); color: var(--white); }
+    .av-btn.active-short { background: var(--danger);  border-color: var(--danger);  color: var(--white); }
+    .av-btn.active-invalid { background: var(--accent); border-color: var(--accent); color: var(--white); }
+    .av-btn:not(.active-avail):not(.active-short):not(.active-invalid):hover.btn-avail  { border-color: var(--success); color: var(--success); }
+    .av-btn:not(.active-avail):not(.active-short):not(.active-invalid):hover.btn-short  { border-color: var(--danger);  color: var(--danger); }
+    .av-btn:not(.active-avail):not(.active-short):not(.active-invalid):hover.btn-invalid { border-color: var(--accent); color: var(--accent-dim); }
+    .pr-status-icon { display: flex; align-items: center; justify-content: center; }
+    .icon-avail  { color: var(--success); }
+    .icon-short  { color: var(--danger); }
+    .icon-invalid { color: var(--accent-dim); }
+    .icon-none   { color: var(--grey-bdr); }
+
+    /* ── Σύνοψη Progress Bar ── */
+    .progress-bar-wrap {
+      margin: 12px 28px 0;
+      background: var(--grey-bg);
+      border: 1px solid var(--grey-bdr);
+      border-radius: var(--r);
+      padding: 12px 16px;
+    }
+    .pb-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: .72rem;
+      color: var(--txt-soft);
+      margin-bottom: 8px;
+    }
+    .pb-track {
+      height: 7px;
+      background: var(--grey-bdr);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+    .pb-avail { background: var(--success); height: 100%; transition: width var(--t); }
+    .pb-short { background: var(--danger);  height: 100%; transition: width var(--t); }
+    .pb-legend { display: flex; gap: 14px; margin-top: 8px; flex-wrap: wrap; }
+    .pb-leg-item { display: flex; align-items: center; gap: 5px; font-size: .71rem; color: var(--txt-soft); }
+    .pb-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ── Action Bar ── */
+    .action-bar {
+      padding: 16px 28px;
+      border-top: 1px solid var(--grey-bdr);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+    .action-hint { font-size: .76rem; color: var(--txt-soft); flex: 1; min-width: 180px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--r);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .92rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: all var(--t);
+    }
+    .btn-ghost  { background: transparent; color: var(--txt-soft); border: 1.5px solid var(--grey-bdr); }
+    .btn-ghost:hover { background: var(--grey-bg); border-color: var(--grey-mid); }
+    .btn-navy   { background: var(--navy); color: var(--white); }
+    .btn-navy:hover  { background: var(--navy-mid); box-shadow: 0 4px 14px rgba(26,58,95,.28); transform: translateY(-1px); }
+    .btn-navy:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-success { background: var(--success); color: var(--white); }
+    .btn-success:hover { filter: brightness(1.05); box-shadow: 0 4px 14px rgba(30,126,74,.3); transform: translateY(-1px); }
+    .btn-danger { background: var(--danger); color: var(--white); }
+    .btn-danger:hover { filter: brightness(1.05); }
+
+    /* ── Result Screen ── */
+    .result-screen { padding: 24px 28px; display: none; flex-direction: column; gap: 20px; }
+    .result-screen.visible { display: flex; }
+    .rs-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-radius: var(--r);
+      background: var(--success-bg);
+      border: 1px solid rgba(30,126,74,.2);
+    }
+    .rs-ok-icon {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--success);
+      color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .rs-head-txt h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+    .rs-head-txt p { font-size: .78rem; color: var(--txt-soft); margin-top: 2px; }
+    .rs-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .rs-list {
+      border-radius: var(--r);
+      border: 1.5px solid var(--grey-bdr);
+      overflow: hidden;
+    }
+    .rs-list-header {
+      padding: 10px 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rs-list.avail-list .rs-list-header { background: var(--success-bg); color: var(--success); border-bottom: 1px solid rgba(30,126,74,.2); }
+    .rs-list.short-list .rs-list-header { background: var(--danger-bg);  color: var(--danger);  border-bottom: 1px solid rgba(192,57,43,.2); }
+    .rs-list-items { padding: 10px 14px; display: flex; flex-direction: column; gap: 7px; }
+    .rs-item { display: flex; justify-content: space-between; align-items: center; font-size: .82rem; }
+    .rs-code { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: var(--navy); letter-spacing: .03em; }
+    .rs-qty  { font-size: .76rem; color: var(--txt-soft); }
+    .rs-empty { font-size: .78rem; color: var(--grey-mid); font-style: italic; padding: 6px 0; }
+    .rs-notify {
+      padding: 13px 16px;
+      border-radius: var(--r);
+      background: var(--accent-bg);
+      border: 1px solid rgba(232,160,32,.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .8rem;
+      color: var(--accent-dim);
+      font-weight: 500;
+    }
+    .rs-invalid-block {
+      padding: 12px 16px;
+      border-radius: var(--r);
+      background: var(--warn-bg);
+      border: 1px solid rgba(184,125,18,.3);
+      font-size: .8rem;
+      color: var(--warn);
+    }
+    .rs-invalid-block strong { font-family: 'Barlow Condensed', sans-serif; font-size: .85rem; letter-spacing: .04em; }
+
+    /* ── Error toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--danger);
+      color: white;
+      padding: 12px 18px;
+      border-radius: var(--r);
+      font-size: .82rem;
+      font-weight: 500;
+      box-shadow: var(--sh-md);
+      display: none;
+      z-index: 100;
+      animation: slideIn .25s ease;
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { min-height: unset; max-height: 260px; }
+      .rs-lists { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="logo">ELMECH SYSTEMS <em>Industrial ERP</em></div>
+  <div class="topbar-module">Διαχείριση Αποθήκης</div>
+  <div class="topbar-user">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Υπεύθυνος Αποθήκης
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── Sidebar: Order List ── -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        Απλές Παραγγελίες
+        <span class="badge-count" id="pendingCount">5</span>
+      </h3>
+      <p>Εκκρεμούν έλεγχος διαθεσιμότητας</p>
+    </div>
+    <div class="order-list" id="orderList"></div>
+  </aside>
+
+  <!-- ── Main Panel ── -->
+  <main class="main" id="mainPanel">
+
+    <!-- Empty state -->
+    <div class="main-empty" id="emptyState">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+        <line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/>
+      </svg>
+      <p>Επιλέξτε παραγγελία από τη λίστα για να ελέγξετε τη διαθεσιμότητα των προϊόντων.</p>
+    </div>
+
+    <!-- Detail content (hidden until order selected) -->
+    <div id="detailContent" style="display:none; flex:1; display:none; flex-direction:column;">
+
+      <!-- Detail Header -->
+      <div class="detail-header">
+        <div class="dh-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        </div>
+        <div class="dh-info">
+          <h2 id="dOrderId">—</h2>
+          <p id="dOrderDate">—</p>
+          <div class="dh-badges">
+            <span class="dh-badge badge-simple">Απλή Παραγγελία → Αποθήκη</span>
+            <span class="dh-badge badge-items" id="dItemCount">—</span>
+          </div>
+        </div>
+        <div class="dh-actions">
+          <button class="btn btn-ghost" onclick="cancelCheck()" title="Ακύρωση ελέγχου">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Ακύρωση
+          </button>
+        </div>
+      </div>
+
+      <!-- Customer Info Bar -->
+      <div class="customer-bar">
+        <div class="cb-field">
+          <span class="cb-lbl">Πελάτης</span>
+          <span class="cb-val" id="dCustomer">—</span>
+        </div>
+        <div class="cb-field">
+          <span class="cb-lbl">Τηλέφωνο</span>
+          <span class="cb-val" id="dPhone">—</span>
+        </div>
+        <div class="cb-field">
+          <span class="cb-lbl">Διεύθυνση</span>
+          <span class="cb-val" id="dAddress">—</span>
+        </div>
+        <div class="cb-field">
+          <span class="cb-lbl">Τεμάχια</span>
+          <span class="cb-val" id="dTotalQty">—</span>
+        </div>
+      </div>
+
+      <!-- Progress summary -->
+      <div class="progress-bar-wrap">
+        <div class="pb-labels">
+          <span>Πρόοδος ελέγχου</span>
+          <span id="pbProgress">0 / 0 προϊόντα ελεγμένα</span>
+        </div>
+        <div class="pb-track">
+          <div class="pb-avail" id="pbAvail" style="width:0%"></div>
+          <div class="pb-short" id="pbShort" style="width:0%"></div>
+        </div>
+        <div class="pb-legend">
+          <div class="pb-leg-item"><div class="pb-dot" style="background:var(--success)"></div> Διαθέσιμο</div>
+          <div class="pb-leg-item"><div class="pb-dot" style="background:var(--danger)"></div> Σε έλλειψη</div>
+          <div class="pb-leg-item"><div class="pb-dot" style="background:var(--accent)"></div> Μη έγκυρος κωδικός</div>
+          <div class="pb-leg-item"><div class="pb-dot" style="background:var(--grey-bdr)"></div> Εκκρεμεί</div>
+        </div>
+      </div>
+
+      <!-- Products Section -->
+      <div class="products-section" style="padding-top:16px;">
+        <div class="section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Κατάλογος Προϊόντων — Έλεγχος Διαθεσιμότητας
+        </div>
+        <div class="prod-rows" id="prodRows"></div>
+      </div>
+
+      <!-- Result Screen (shown after confirmation) -->
+      <div class="result-screen" id="resultScreen">
+        <div class="rs-head">
+          <div class="rs-ok-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="rs-head-txt">
+            <h3>Διαθεσιμότητα Επιβεβαιώθηκε</h3>
+            <p id="rsHeadSub">Ο έλεγχος ολοκληρώθηκε. Οι λίστες δημιουργήθηκαν.</p>
+          </div>
+        </div>
+
+        <div class="rs-lists">
+          <div class="rs-list avail-list">
+            <div class="rs-list-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Εγκεκριμένα (Διαθέσιμα)
+            </div>
+            <div class="rs-list-items" id="rsAvailList"></div>
+          </div>
+          <div class="rs-list short-list">
+            <div class="rs-list-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Μη Εγκεκριμένα (Έλλειψη)
+            </div>
+            <div class="rs-list-items" id="rsShortList"></div>
+          </div>
+        </div>
+
+        <div class="rs-notify" id="rsNotify" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.72A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.1a16 16 0 006 6l.62-.62a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 15.92z"/></svg>
+          <span id="rsNotifyTxt"></span>
+        </div>
+
+        <div class="rs-invalid-block" id="rsInvalidBlock" style="display:none">
+          <strong>⚠ Μη έγκυροι κωδικοί — Ειδοποίηση Ιδιοκτήτη</strong>
+          <p style="margin-top:5px;" id="rsInvalidList"></p>
+        </div>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="action-bar" id="actionBar">
+        <span class="action-hint" id="actionHint">Ελέγξτε τη διαθεσιμότητα κάθε προϊόντος και επιβεβαιώστε.</span>
+        <button class="btn btn-ghost" onclick="cancelCheck()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Ακύρωση
+        </button>
+        <button class="btn btn-navy" id="confirmBtn" onclick="confirmAvailability()" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Επιβεβαίωση Διαθεσιμότητας
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ── Sample Data: Απλές Παραγγελίες (from orders module) ── */
+  const ORDERS = [
+    {
+      id: '#ORD-2025-042', date: '26/04/2025', customer: 'Γεώργιος Παπαδόπουλος',
+      phone: '210 123 4567', address: 'Λεωφ. Αθηνών 45, Αθήνα',
+      status: 'pending',
+      products: [
+        { code: 'GRU-CM5-6-A',  desc: 'Αντλία Φυγόκεντρος 5.5kW',  qty: 2 },
+        { code: 'GRU-CM2-4-B',  desc: 'Αντλία Νερού 2.2kW',         qty: 1 },
+        { code: 'FIL-WF80-SS',  desc: 'Φίλτρο Νερού Inox 80mm',      qty: 3 },
+      ]
+    },
+    {
+      id: '#ORD-2025-043', date: '26/04/2025', customer: 'Μαρία Αναγνωστοπούλου',
+      phone: '2310 456 789', address: 'Εγνατία 12, Θεσσαλονίκη',
+      status: 'pending',
+      products: [
+        { code: 'PMP-DW3-KIT', desc: 'Αντλία Βαθιάς Γεώτρησης 3"',  qty: 1 },
+        { code: 'CAB-PVC-25M', desc: 'Καλώδιο PVC 25μ',              qty: 2 },
+        { code: 'XXT-NONEXIST', desc: 'Τμήμα Σύνδεσης (ανύπαρκτος)', qty: 1 },
+      ]
+    },
+    {
+      id: '#ORD-2025-044', date: '25/04/2025', customer: 'Νίκος Κωνσταντίνου',
+      phone: '2610 321 654', address: 'Κορίνθου 8, Πάτρα',
+      status: 'pending',
+      products: [
+        { code: 'GRU-CM5-6-A',  desc: 'Αντλία Φυγόκεντρος 5.5kW',  qty: 4 },
+        { code: 'VLV-GATE-DN50', desc: 'Βάνα Gate DN50',              qty: 4 },
+      ]
+    },
+    {
+      id: '#ORD-2025-039', date: '24/04/2025', customer: 'Αλέξανδρος Δημητρίου',
+      phone: '2410 789 012', address: 'Ολύμπου 3, Λάρισα',
+      status: 'done',
+      products: [
+        { code: 'PMP-SB2-250',  desc: 'Αντλία Υποβρύχιος 2.5kW',    qty: 1 },
+        { code: 'CAB-PVC-25M',  desc: 'Καλώδιο PVC 25μ',             qty: 3 },
+      ]
+    },
+    {
+      id: '#ORD-2025-041', date: '25/04/2025', customer: 'Σταύρος Μιχαηλίδης',
+      phone: '25310 55 123', address: 'Βενιζέλου 22, Αλεξανδρούπολη',
+      status: 'pending',
+      products: [
+        { code: 'FIL-WF80-SS',  desc: 'Φίλτρο Νερού Inox 80mm',      qty: 5 },
+        { code: 'GRU-CM2-4-B',  desc: 'Αντλία Νερού 2.2kW',          qty: 2 },
+        { code: 'VLV-GATE-DN50', desc: 'Βάνα Gate DN50',              qty: 6 },
+        { code: 'PMP-DW3-KIT',  desc: 'Αντλία Βαθιάς Γεώτρησης 3"',  qty: 1 },
+      ]
+    },
+  ];
+
+  /* ── State ── */
+  let selectedOrderIdx = null;
+  let productStates = [];   // 'none' | 'avail' | 'short' | 'invalid'
+  let confirmed = false;
+  let savedStates = {};     // save states per order id
+
+  /* ── Init ── */
+  function init() {
+    renderOrderList();
+  }
+
+  function renderOrderList() {
+    const list = document.getElementById('orderList');
+    const pending = ORDERS.filter(o => o.status === 'pending').length;
+    document.getElementById('pendingCount').textContent = pending;
+
+    list.innerHTML = '';
+    ORDERS.forEach((o, i) => {
+      const isDone = o.status === 'done';
+      const div = document.createElement('div');
+      div.className = 'order-item' + (isDone ? ' done' : '') + (!isDone && selectedOrderIdx === i ? ' selected' : '');
+      if (isDone) {
+        div.style.cursor = 'not-allowed';
+        div.style.pointerEvents = 'none';
+      } else {
+        div.onclick = () => selectOrder(i);
+      }
+      const itemCount = o.products.length;
+      if (isDone) {
+        div.innerHTML = `
+          <div class="oi-top">
+            <span class="oi-id" style="text-decoration:line-through;opacity:.45">${o.id}</span>
+            <span class="oi-status status-done" style="display:flex;align-items:center;gap:4px">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Ολοκλήρωση Αποστολής
+            </span>
+          </div>
+          <div class="oi-customer" style="opacity:.4">${o.customer}</div>
+          <div class="oi-meta" style="opacity:.35">
+            <span>${o.date}</span>
+            <span>Οριστικά ολοκληρωμένη</span>
+          </div>`;
+      } else {
+        div.innerHTML = `
+          <div class="oi-top">
+            <span class="oi-id">${o.id}</span>
+            <span class="oi-status status-pending">Εκκρεμεί</span>
+          </div>
+          <div class="oi-customer">${o.customer}</div>
+          <div class="oi-meta">
+            <span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              ${o.date}
+            </span>
+            <span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              ${itemCount} κωδικοί
+            </span>
+          </div>`;
+      }
+      list.appendChild(div);
+    });
+  }
+
+  function selectOrder(idx) {
+    selectedOrderIdx = idx;
+    confirmed = false;
+    const order = ORDERS[idx];
+
+    // Restore saved states if any
+    if (savedStates[order.id]) {
+      productStates = [...savedStates[order.id]];
+    } else {
+      productStates = order.products.map(() => 'none');
+    }
+
+    renderOrderList();
+    renderDetail(order);
+  }
+
+  function renderDetail(order) {
+    document.getElementById('emptyState').style.display = 'none';
+    const dc = document.getElementById('detailContent');
+    dc.style.display = 'flex';
+
+    document.getElementById('dOrderId').textContent = order.id;
+    document.getElementById('dOrderDate').textContent = 'Ημερομηνία: ' + order.date + ' · Τμήμα Πωλήσεων → Αποθήκη';
+    document.getElementById('dItemCount').textContent = order.products.length + ' κωδικοί';
+    document.getElementById('dCustomer').textContent = order.customer;
+    document.getElementById('dPhone').textContent = order.phone;
+    document.getElementById('dAddress').textContent = order.address || '—';
+    const totalQty = order.products.reduce((s, p) => s + p.qty, 0);
+    document.getElementById('dTotalQty').textContent = totalQty + ' τεμ.';
+
+    // Hide result, show product rows
+    document.getElementById('resultScreen').classList.remove('visible');
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('prodRows').style.display = '';
+    document.querySelector('.products-section').style.display = '';
+    document.querySelector('.progress-bar-wrap').style.display = '';
+
+    // Always restore action bar to its original state
+    const bar = document.getElementById('actionBar');
+    bar.style.display = '';
+    bar.innerHTML = `
+      <span class="action-hint" id="actionHint">Ελέγξτε τη διαθεσιμότητα κάθε προϊόντος και επιβεβαιώστε.</span>
+      <button class="btn btn-ghost" onclick="cancelCheck()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Ακύρωση
+      </button>
+      <button class="btn btn-navy" id="confirmBtn" onclick="confirmAvailability()" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Επιβεβαίωση Διαθεσιμότητας
+      </button>`;
+
+    renderProducts(order);
+    updateProgress(order);
+    updateConfirmBtn();
+  }
+
+  function renderProducts(order) {
+    const container = document.getElementById('prodRows');
+    container.innerHTML = '';
+    order.products.forEach((p, i) => {
+      const state = productStates[i];
+      let rowCls = '';
+      if (state === 'avail')   rowCls = 'avail';
+      if (state === 'short')   rowCls = 'short';
+      if (state === 'invalid') rowCls = 'invalid';
+
+      const iconAvail   = `<svg class="icon-avail"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+      const iconShort   = `<svg class="icon-short"   width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+      const iconInvalid = `<svg class="icon-invalid" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+      const iconNone    = `<svg class="icon-none"    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-dasharray="4 3"/></svg>`;
+
+      let iconHtml = iconNone;
+      if (state === 'avail')   iconHtml = iconAvail;
+      if (state === 'short')   iconHtml = iconShort;
+      if (state === 'invalid') iconHtml = iconInvalid;
+
+      const row = document.createElement('div');
+      row.className = 'prod-row' + (rowCls ? ' ' + rowCls : '');
+      row.id = 'prodRow_' + i;
+      row.innerHTML = `
+        <div class="pr-num">${i + 1}</div>
+        <div class="pr-code">${p.code}<small>${p.desc}</small></div>
+        <div class="pr-qty"><span>${p.qty}</span> τεμ.</div>
+        <div class="avail-btns">
+          <button class="av-btn btn-avail ${state === 'avail' ? 'active-avail' : ''}" onclick="setAvail(${i},'avail')">
+            ✓ Διαθέσιμο
+          </button>
+          <button class="av-btn btn-short ${state === 'short' ? 'active-short' : ''}" onclick="setAvail(${i},'short')">
+            ! Έλλειψη
+          </button>
+          <button class="av-btn btn-invalid ${state === 'invalid' ? 'active-invalid' : ''}" onclick="setAvail(${i},'invalid')" title="Μη αναγνωρίσιμος κωδικός — ειδοποίηση ιδιοκτήτη">
+            ? Μη έγκυρος
+          </button>
+        </div>
+        <div class="pr-status-icon">${iconHtml}</div>`;
+      container.appendChild(row);
+    });
+  }
+
+  function setAvail(prodIdx, state) {
+    // Toggle off if same
+    if (productStates[prodIdx] === state) {
+      productStates[prodIdx] = 'none';
+    } else {
+      productStates[prodIdx] = state;
+    }
+    const order = ORDERS[selectedOrderIdx];
+    // Save progress
+    savedStates[order.id] = [...productStates];
+    renderProducts(order);
+    updateProgress(order);
+    updateConfirmBtn();
+  }
+
+  function updateProgress(order) {
+    const total = order.products.length;
+    const avail   = productStates.filter(s => s === 'avail').length;
+    const short   = productStates.filter(s => s === 'short').length;
+    const invalid = productStates.filter(s => s === 'invalid').length;
+    const checked = avail + short + invalid;
+
+    document.getElementById('pbProgress').textContent = checked + ' / ' + total + ' προϊόντα ελεγμένα';
+    const pctAvail = (avail / total) * 100;
+    const pctShort = (short / total) * 100;
+    document.getElementById('pbAvail').style.width = pctAvail + '%';
+    document.getElementById('pbShort').style.width = pctShort + '%';
+  }
+
+  function updateConfirmBtn() {
+    const order = ORDERS[selectedOrderIdx];
+    if (!order) return;
+    const total = order.products.length;
+    const checked = productStates.filter(s => s !== 'none').length;
+    const allDone = checked === total;
+    const btn = document.getElementById('confirmBtn');
+    btn.disabled = !allDone;
+
+    const hint = document.getElementById('actionHint');
+    if (allDone) {
+      hint.textContent = 'Όλα τα προϊόντα ελεγμένα. Μπορείτε να επιβεβαιώσετε τη διαθεσιμότητα.';
+      hint.style.color = 'var(--success)';
+    } else {
+      const rem = total - checked;
+      hint.textContent = 'Εκκρεμούν ' + rem + ' προϊόν' + (rem === 1 ? '' : 'τα') + ' προς έλεγχο.';
+      hint.style.color = 'var(--txt-soft)';
+    }
+  }
+
+  function confirmAvailability() {
+    const order = ORDERS[selectedOrderIdx];
+    const avail   = [];
+    const shortage = [];
+    const invalid = [];
+
+    order.products.forEach((p, i) => {
+      if (productStates[i] === 'avail')   avail.push(p);
+      if (productStates[i] === 'short')   shortage.push(p);
+      if (productStates[i] === 'invalid') invalid.push(p);
+    });
+
+    // Mark order as done
+    ORDERS[selectedOrderIdx].status = 'done';
+    confirmed = true;
+
+    // Hide product section, show result
+    document.querySelector('.products-section').style.display = 'none';
+    document.querySelector('.progress-bar-wrap').style.display = 'none';
+    document.getElementById('actionBar').style.display = 'none';
+
+    // Build result lists
+    const rsAvail = document.getElementById('rsAvailList');
+    const rsShort = document.getElementById('rsShortList');
+    rsAvail.innerHTML = avail.length
+      ? avail.map(p => `<div class="rs-item"><span class="rs-code">${p.code}</span><span class="rs-qty">${p.qty} τεμ.</span></div>`).join('')
+      : '<div class="rs-empty">Κανένα διαθέσιμο προϊόν</div>';
+    rsShort.innerHTML = shortage.length
+      ? shortage.map(p => `<div class="rs-item"><span class="rs-code">${p.code}</span><span class="rs-qty">${p.qty} τεμ.</span></div>`).join('')
+      : '<div class="rs-empty">Κανένα σε έλλειψη</div>';
+
+    // Notification
+    const notifyEl = document.getElementById('rsNotify');
+    const notifyTxt = document.getElementById('rsNotifyTxt');
+    if (shortage.length > 0) {
+      notifyEl.style.display = 'flex';
+      notifyTxt.textContent = 'Η λίστα ελλείψεων (' + shortage.length + ' κωδικοί) στάλθηκε στη Γραμματεία για επικοινωνία με Προμηθευτές.';
+    } else {
+      notifyEl.style.display = 'flex';
+      notifyTxt.textContent = 'Η Γραμματεία ενημερώθηκε — όλα τα προϊόντα είναι διαθέσιμα. Η παραγγελία προχωρά σε παράδοση.';
+    }
+
+    // Invalid codes
+    const invEl = document.getElementById('rsInvalidBlock');
+    const invList = document.getElementById('rsInvalidList');
+    if (invalid.length > 0) {
+      invEl.style.display = 'block';
+      invList.textContent = 'Κωδικοί: ' + invalid.map(p => p.code).join(', ') + ' — Ο ιδιοκτήτης έχει ειδοποιηθεί αυτόματα.';
+    } else {
+      invEl.style.display = 'none';
+    }
+
+    document.getElementById('rsHeadSub').textContent =
+      order.id + ' — ' + avail.length + ' διαθέσιμα · ' + shortage.length + ' σε έλλειψη' + (invalid.length ? ' · ' + invalid.length + ' μη έγκυροι' : '');
+
+    const rs = document.getElementById('resultScreen');
+    rs.style.display = 'flex';
+    rs.classList.add('visible');
+
+    // Add a "new order" button to action bar
+    const bar = document.getElementById('actionBar');
+    bar.style.display = 'flex';
+    bar.innerHTML = `
+      <span class="action-hint" style="color:var(--success)">Η διαθεσιμότητα επιβεβαιώθηκε επιτυχώς.</span>
+      <button class="btn btn-ghost" onclick="resetDetail()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        Νέος Έλεγχος
+      </button>`;
+
+    renderOrderList();
+  }
+
+  function cancelCheck() {
+    // Save progress before cancelling (as per alternative flow 4.2)
+    const order = ORDERS[selectedOrderIdx];
+    if (order) savedStates[order.id] = [...productStates];
+    showToast('Η πρόοδος αποθηκεύτηκε. Μπορείτε να συνεχίσετε τον έλεγχο αργότερα.');
+    setTimeout(() => resetDetail(), 1400);
+  }
+
+  function resetDetail() {
+    selectedOrderIdx = null;
+    confirmed = false;
+    productStates = [];
+    document.getElementById('emptyState').style.display = '';
+    document.getElementById('detailContent').style.display = 'none';
+    renderOrderList();
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    t.style.background = 'var(--warn)';
+    setTimeout(() => { t.style.display = 'none'; }, 2800);
+  }
+
+  init();
+</script>
+</body>
+</html>

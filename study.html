@@ -1,12 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Νέα Παραγγελία — ELMECH SYSTEMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+    :root {
+      --navy:       #1a3a5f;
+      --navy-dark:  #112840;
+      --navy-mid:   #254e80;
+      --navy-light: #3a6fa8;
+      --accent:     #e8a020;
+      --accent-dim: #b87d12;
+      --accent-bg:  rgba(232,160,32,.1);
+      --danger:     #c0392b;
+      --danger-bg:  #fdf0ee;
+      --success:    #1e7e4a;
+      --success-bg: #eaf5ee;
+      --grey-bg:    #eef1f5;
+      --grey-bdr:   #d8dfe8;
+      --grey-mid:   #8a9ab0;
+      --white:      #ffffff;
+      --txt:        #1c2b3a;
+      --txt-soft:   #5a6b7c;
+      --r:          6px;
+      --sh-sm:      0 1px 4px rgba(26,58,95,.1);
+      --sh-md:      0 6px 24px rgba(26,58,95,.13);
+      --t:          .22s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--grey-bg);
+      color: var(--txt);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Bar ── */
+    .topbar {
+      background: var(--navy-dark);
+      border-bottom: 3px solid var(--accent);
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: var(--white);
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .logo em {
+      font-style: normal;
+      font-size: .62rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .topbar-module {
+      margin-left: auto;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.45);
+    }
+
+    /* ── Page ── */
+    .page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 64px;
+    }
+
+    /* ── Stepper ── */
+    .stepper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 620px;
+      margin-bottom: 36px;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: calc(50% + 22px);
+      right: calc(-50% + 22px);
+      height: 2px;
+      background: var(--grey-bdr);
+      transition: background var(--t);
+    }
+    .step.done:not(:last-child)::after { background: var(--navy-light); }
+    .step-bub {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--grey-bdr);
+      background: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: .95rem;
+      color: var(--grey-mid);
+      transition: all var(--t);
+      z-index: 1;
+    }
+    .step.active .step-bub { border-color: var(--navy); background: var(--navy); color: var(--white); box-shadow: 0 0 0 4px rgba(26,58,95,.14); }
+    .step.done  .step-bub  { border-color: var(--success); background: var(--success); color: var(--white); }
+    .step-lbl {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--grey-mid);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .step.active .step-lbl { color: var(--navy); }
+    .step.done   .step-lbl { color: var(--success); }
+
+    /* ── Panel ── */
+    .panel {
+      display: none;
+      width: 100%;
+      max-width: 700px;
+      background: var(--white);
+      border: 1px solid var(--grey-bdr);
+      border-radius: var(--r);
+      box-shadow: var(--sh-md);
+      overflow: hidden;
+      animation: fadeUp .27s ease both;
+    }
+    .panel.active { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Panel Header ── */
+    .ph {
+      background: var(--navy);
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .ph-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,.1);
+      border-radius: var(--r);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .ph-text h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      color: var(--white);
+    }
+    .ph-text p {
+      font-size: .75rem;
+      color: rgba(255,255,255,.5);
+      margin-top: 2px;
+    }
+
+    /* ── Panel Body ── */
+    .pb { padding: 28px; }
+
+    /* ── Form Grid ── */
+    .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 24px; }
+    .s2 { grid-column: 1 / -1; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--txt-soft);
+    }
+    .req { color: var(--danger); }
+    .field input,
+    .field textarea {
+      padding: 9px 13px;
+      border: 1.5px solid var(--grey-bdr);
+      border-radius: var(--r);
+      font-family: 'Barlow', sans-serif;
+      font-size: .92rem;
+      color: var(--txt);
+      background: var(--white);
+      transition: border-color var(--t), box-shadow var(--t);
+      outline: none;
+    }
+    .field input:focus, .field textarea:focus {
+      border-color: var(--navy-light);
+      box-shadow: 0 0 0 3px rgba(26,58,95,.1);
+    }
+    .field input.err, .field textarea.err {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(192,57,43,.1);
+    }
+    .field textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
+    .field-hint { font-size: .71rem; color: var(--grey-mid); }
+
+    /* ── Actions ── */
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--grey-bdr);
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: var(--r);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: all var(--t);
+    }
+    .btn-ghost { background: transparent; color: var(--txt-soft); border: 1.5px solid var(--grey-bdr); }
+    .btn-ghost:hover { background: var(--grey-bg); border-color: var(--grey-mid); }
+    .btn-navy  { background: var(--navy); color: var(--white); }
+    .btn-navy:hover  { background: var(--navy-mid); box-shadow: 0 4px 14px rgba(26,58,95,.28); transform: translateY(-1px); }
+    .btn-accent { background: var(--accent); color: var(--white); }
+    .btn-accent:hover { background: var(--accent-dim); box-shadow: 0 4px 14px rgba(232,160,32,.35); transform: translateY(-1px); }
+
+    /* ── Type Selection Screen ── */
+    .type-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 36px 28px 32px;
+    }
+    .type-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: .03em;
+      text-align: center;
+    }
+    .type-sub { font-size: .8rem; color: var(--txt-soft); text-align: center; margin-top: -12px; }
+    .type-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+    .type-card {
+      border: 2px solid var(--grey-bdr);
+      border-radius: var(--r);
+      padding: 26px 20px 22px;
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--t);
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .tc-simple:hover  { border-color: var(--navy); box-shadow: var(--sh-md); transform: translateY(-2px); }
+    .tc-complex:hover { border-color: var(--accent); box-shadow: var(--sh-md); transform: translateY(-2px); }
+    .tc-icon {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+    }
+    .tc-simple  .tc-icon { background: rgba(26,58,95,.08); color: var(--navy); }
+    .tc-complex .tc-icon { background: var(--accent-bg); color: var(--accent-dim); }
+    .type-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+    .tc-simple  h3 { color: var(--navy); }
+    .tc-complex h3 { color: var(--accent-dim); }
+    .type-card p { font-size: .78rem; color: var(--txt-soft); line-height: 1.5; }
+    .tc-badge {
+      margin-top: 4px;
+      padding: 3px 14px;
+      border-radius: 20px;
+      font-size: .67rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .tc-simple  .tc-badge { background: rgba(26,58,95,.1); color: var(--navy); }
+    .tc-complex .tc-badge { background: var(--accent-bg); color: var(--accent-dim); }
+
+    /* ── Product Rows ── */
+    .prod-list { display: flex; flex-direction: column; gap: 12px; }
+    .prod-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 38px;
+      gap: 10px;
+      align-items: end;
+      padding: 16px;
+      border: 1.5px solid var(--grey-bdr);
+      border-radius: var(--r);
+      background: var(--grey-bg);
+      animation: fadeUp .2s ease both;
+    }
+    .prod-row.req-row { border-left: 3px solid var(--navy); }
+    .prod-row.opt-row { border-left: 3px solid var(--grey-mid); }
+    .prod-row-num {
+      grid-column: 1 / -1;
+      font-size: .67rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--grey-mid);
+      margin-bottom: -4px;
+    }
+    .req-row .prod-row-num { color: var(--navy-light); }
+    .rm-btn {
+      width: 36px; height: 36px;
+      border-radius: var(--r);
+      border: 1.5px solid var(--grey-bdr);
+      background: var(--white);
+      color: var(--grey-mid);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--t);
+    }
+    .rm-btn:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+    .add-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: 1.5px dashed var(--grey-bdr);
+      border-radius: var(--r);
+      background: transparent;
+      color: var(--navy-light);
+      font-family: 'Barlow', sans-serif;
+      font-size: .84rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+      transition: all var(--t);
+    }
+    .add-btn:hover { border-color: var(--navy-light); background: rgba(26,58,95,.04); }
+
+    /* ── Study Date Block ── */
+    .study-block {
+      background: var(--accent-bg);
+      border: 1.5px solid rgba(232,160,32,.38);
+      border-radius: var(--r);
+      padding: 18px 20px;
+      margin-top: 6px;
+    }
+    .study-block-lbl {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .84rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    hr.div { border: none; border-top: 1px solid var(--grey-bdr); margin: 22px 0; }
+
+    /* ── Success ── */
+    .success-scr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 52px 28px 44px;
+      text-align: center;
+    }
+    .ok-circle {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      border: 3px solid var(--success);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--success);
+      animation: pop .35s cubic-bezier(.68,-.55,.27,1.55) both;
+    }
+    @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-scr h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: .03em;
+    }
+    .ok-id {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy-light);
+      background: rgba(26,58,95,.07);
+      padding: 6px 20px;
+      border-radius: 20px;
+      letter-spacing: .07em;
+    }
+    .ok-msg { font-size: .87rem; color: var(--txt-soft); max-width: 420px; line-height: 1.6; }
+    .ok-route {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--txt-soft);
+      background: var(--grey-bg);
+      padding: 8px 18px;
+      border-radius: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .ok-route .arr { color: var(--accent); font-size: 1.05rem; }
+
+    @media (max-width: 580px) {
+      .fg { grid-template-columns: 1fr; }
+      .s2 { grid-column: 1; }
+      .type-cards { grid-template-columns: 1fr; }
+      .prod-row { grid-template-columns: 1fr 90px 36px; }
+      .topbar { padding: 0 20px; }
+      .page { padding: 24px 16px 48px; }
+    }
+  </style>
 </head>
 <body>
-    <!--This page will take the advanced orders as input-->>
-    
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="logo">ELMECH SYSTEMS <em>Industrial ERP</em></div>
+  <div class="topbar-module">Μελέτη</div>
+</header>    
 </body>
 </html>

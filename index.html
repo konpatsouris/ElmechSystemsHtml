@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELMECH SYSTEMS — Κεντρικό Μενού</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+ --navy:#1a3a5f;--navy-dark:#112840;--navy-light:#3a6fa8;
+ --accent:#e8a020;--grey-bg:#eef1f5;--grey-bdr:#d8dfe8;
+ --txt:#1c2b3a;--txt-soft:#5a6b7c;--r:6px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+ font-family:'Barlow',sans-serif;
+ background:var(--grey-bg);
+ min-height:100vh;
+ display:flex;
+ flex-direction:column
+}
+
+/* ── Topbar ── */
+.topbar{
+ height:60px;
+ background:var(--navy-dark);
+ border-bottom:3px solid var(--accent);
+ padding:0 40px;
+ display:flex;
+ align-items:center
+}
+.logo{
+ font-family:'Barlow Condensed';
+ font-size:1.3rem;
+ font-weight:800;
+ letter-spacing:.08em;
+ color:white
+}
+.logo em{
+ font-size:.62rem;
+ font-weight:500;
+ letter-spacing:.2em;
+ color:var(--accent);
+ margin-left:6px
+}
+
+/* ── Main ── */
+.main{
+ flex:1;
+ display:flex;
+ align-items:center;
+ justify-content:center
+}
+.menu-box{
+ background:white;
+ border:1px solid var(--grey-bdr);
+ border-radius:var(--r);
+ box-shadow:0 6px 24px rgba(26,58,95,.13);
+ padding:36px 42px;
+ display:flex;
+ flex-direction:column;
+ gap:18px;
+ min-width:320px
+}
+.menu-box h2{
+ font-family:'Barlow Condensed';
+ color:var(--navy);
+ text-align:center;
+ margin-bottom:10px
+}
+.menu-btn{
+ padding:14px;
+ border-radius:var(--r);
+ border:1.5px solid var(--grey-bdr);
+ background:transparent;
+ font-family:'Barlow Condensed';
+ font-size:1rem;
+ font-weight:700;
+ letter-spacing:.06em;
+ cursor:pointer;
+ transition:.2s
+}
+.menu-btn:hover{
+ background:var(--grey-bg);
+ border-color:var(--navy-light)
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+ <div class="logo">ELMECH SYSTEMS <em>Industrial ERP</em></div>
+</header>
+
+<main class="main">
+ <div class="menu-box">
+  <h2>Κεντρικό Μενού</h2>
+
+  <button class="menu-btn" onclick="go('orders.html')">
+    Πωλήσεις — Παραγγελίες
+  </button>
+
+  <button class="menu-btn" onclick="go('study.html')">
+    Τεχνική Μελέτη
+  </button>
+
+  <button class="menu-btn" onclick="go('apothiki.html')">
+    Αποθήκη
+  </button>
+ </div>
+</main>
+
+<script>
+function go(page){
+  window.location.href = page;
+}
+</script>
+
+</body>
+</html>

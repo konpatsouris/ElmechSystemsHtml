@@ -7,86 +7,141 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;=Barlow:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
 :root{
- --navy:#1a3a5f;--navy-dark:#112840;--navy-light:#3a6fa8;
- --accent:#e8a020;--grey-bg:#eef1f5;--grey-bdr:#d8dfe8;
- --txt:#1c2b3a;--txt-soft:#5a6b7c;--r:6px
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{
- font-family:'Barlow',sans-serif;
- background:var(--grey-bg);
- min-height:100vh;
- display:flex;
- flex-direction:column
+  --navy:#1a3a5f;
+  --navy-dark:#112840;
+  --navy-mid:#254e80;
+  --navy-light:#3a6fa8;
+  --accent:eef1f5;
+  --grey-bg:#eef1f5;
+  --grey-bdr:#d8dfe8;
+  --txt:#1c2b3a;
+  --txt-soft:#5a6b7c;
+  --white:#fff;
+  --r:6px;
+  --sh-md:0 6px 24px rgba(26,58,95,.13);
+  --t:.22s ease;
 }
 
-/* ── Topbar ── */
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--grey-bg);
+  color:var(--txt);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ── Top Bar (ίδια με orders) ── */
 .topbar{
- height:60px;
- background:var(--navy-dark);
- border-bottom:3px solid var(--accent);
- padding:0 40px;
- display:flex;
- align-items:center
+  height:60px;
+  background:var(--navy-dark);
+  border-bottom:3px solid var(--accent);
+  padding:0 40px;
+  display:flex;
+  align-items:center;
 }
 .logo{
- font-family:'Barlow Condensed';
- font-size:1.3rem;
- font-weight:800;
- letter-spacing:.08em;
- color:white
+  font-family:'Barlow Condensed';
+  font-size:1.3rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  color:white;
 }
 .logo em{
- font-size:.62rem;
- font-weight:500;
- letter-spacing:.2em;
- color:var(--accent);
- margin-left:6px
+  font-style:normal;
+  font-size:.62rem;
+  font-weight:500;
+  letter-spacing:.2em;
+  color:var(--accent);
+  margin-left:8px;
+  text-transform:uppercase;
 }
 
-/* ── Main ── */
-.main{
- flex:1;
- display:flex;
- align-items:center;
- justify-content:center
+/* ── Page wrapper ── */
+.page{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:40px 20px 60px;
 }
-.menu-box{
- background:white;
- border:1px solid var(--grey-bdr);
- border-radius:var(--r);
- box-shadow:0 6px 24px rgba(26,58,95,.13);
- padding:36px 42px;
- display:flex;
- flex-direction:column;
- gap:18px;
- min-width:320px
+
+/* ── Panel (card όπως στο orders) ── */
+.panel{
+  width:100%;
+  max-width:420px;
+  background:var(--white);
+  border:1px solid var(--grey-bdr);
+  border-radius:var(--r);
+  box-shadow:var(--sh-md);
+  overflow:hidden;
+  animation:fadeUp .25s ease both;
 }
-.menu-box h2{
- font-family:'Barlow Condensed';
- color:var(--navy);
- text-align:center;
- margin-bottom:10px
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:none}
 }
+
+/* ── Panel header ── */
+.ph{
+  background:var(--navy);
+  padding:22px 28px;
+  text-align:center;
+}
+.ph h2{
+  font-family:'Barlow Condensed';
+  font-size:1.35rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  color:var(--white);
+}
+
+/* ── Panel body ── */
+.pb{
+  padding:28px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* ── Menu buttons ── */
 .menu-btn{
- padding:14px;
- border-radius:var(--r);
- border:1.5px solid var(--grey-bdr);
- background:transparent;
- font-family:'Barlow Condensed';
- font-size:1rem;
- font-weight:700;
- letter-spacing:.06em;
- cursor:pointer;
- transition:.2s
+  padding:14px;
+  border-radius:var(--r);
+  border:1.5px solid var(--grey-bdr);
+  background:var(--white);
+  font-family:'Barlow Condensed';
+  font-size:.95rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all var(--t);
 }
 .menu-btn:hover{
- background:var(--grey-bg);
- border-color:var(--navy-light)
+  background:var(--grey-bg);
+  border-color:var(--navy-light);
+  box-shadow:0 4px 14px rgba(26,58,95,.15);
+  transform:translateY(-1px);
+}
+.menu-btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:white;
+}
+.menu-btn.primary:hover{
+  background:white;
+}
+
+@media (max-width:580px){
+  .topbar{padding:0 20px}
 }
 </style>
 </head>
@@ -94,25 +149,33 @@ body{
 <body>
 
 <header class="topbar">
- <div class="logo">ELMECH SYSTEMS <em>Industrial ERP</em></div>
+  <div class="logo">ELMECH SYSTEMS <em>Industrial ERP</em></div>
 </header>
 
-<main class="main">
- <div class="menu-box">
-  <h2>Κεντρικό Μενού</h2>
+<main class="page">
+  <div class="panel">
+    <div class="ph">
+      <h2>Κεντρικό Μενού</h2>
+    </div>
 
-  <button class="menu-btn" onclick="go('orders.html')">
-    Πωλήσεις — Παραγγελίες
-  </button>
+    <div class="pb">
+ <button class="menu-btn" onclick="go('orders.html')">
+        Πωλήσεις — Παραγγελίες
+      </button>
 
-  <button class="menu-btn" onclick="go('study.html')">
-    Τεχνική Μελέτη
-  </button>
+      <button class="menu-btn" onclick="go('study.html')">
+        Τεχνική Μελέτη
+      </button>
 
-  <button class="menu-btn" onclick="go('apothiki.html')">
-    Αποθήκη
-  </button>
- </div>
+      <button class="menu-btn" onclick="go('apothiki.html')">
+        Αποθήκη
+      </button>
+
+      <button class="menu-btn" onclick="go('supply.html')">
+        Προμηθευτές
+      </button>
+    </div>
+  </div>
 </main>
 
 <script>

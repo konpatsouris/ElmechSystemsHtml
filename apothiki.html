@@ -970,9 +970,19 @@
       if (productStates[i] === 'invalid') invalid.push(p);
     });
 
-    // Mark order as done
-    ORDERS[selectedOrderIdx].status = 'done';
-    confirmed = true;
+    const hasShortage = shortage.length > 0;
+    const hasInvalid  = invalid.length > 0;
+
+    if (!hasShortage && !hasInvalid) {
+      // ✅ Όλα διαθέσιμα → Ολοκληρωμένη
+      ORDERS[selectedOrderIdx].status = 'done';
+      confirmed = true;
+    } else {
+      // ⚠ Υπάρχουν εκκρεμότητες → παραμένει pending
+      ORDERS[selectedOrderIdx].status = 'pending';
+      confirmed = false;
+    }
+    ``
 
     // Hide product section, show result
     document.querySelector('.products-section').style.display = 'none';

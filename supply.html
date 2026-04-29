@@ -1,11 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>Ελλείψεις & Προμηθευτές — ELMECH SYSTEMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy:#1a3a5f; --accent:#e8a020; --success:#1e7e4a;
+      --danger:#c0392b; --grey:#eef1f5; --bdr:#d8dfe8;
+      --txt:#1c2b3a; --soft:#5a6b7c; --r:6px;
+    }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--grey);
+      margin:0; color:var(--txt);
+    }
+    header {
+      background:#112840;
+      color:#fff;
+      padding:16px 32px;
+      font-family:'Barlow Condensed';
+      letter-spacing:.08em;
+      font-size:1.2rem;
+      border-bottom:3px solid var(--accent);
+    }
+    main { padding:24px 32px; max-width:1100px; margin:auto; }
+
+    h2 {
+      font-family:'Barlow Condensed';
+      margin-bottom:10px;
+    }
+
+    .supplier {
+      border:1.5px solid var(--bdr);
+      border-radius:var(--r);
+      background:#fff;
+      margin-bottom:18px;
+      overflow:hidden;
+    }
+
+    .supplier-header {
+      background:#f5f7fa;
+      padding:12px 16px;
+      font-weight:700;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .supplier-items {
+      padding:12px 16px;
+    }
+
+    .item {
+      display:flex;
+      justify-content:space-between;
+      font-size:.9rem;
+      padding:4px 0;
+      border-bottom:1px dashed var(--bdr);
+    }
+    .item:last-child { border-bottom:none; }
+
+    .code { font-family:'Barlow Condensed'; font-weight:700; color:var(--navy); }
+    .qty { color:var(--soft); }
+
+    .actions {
+      margin-top:24px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    button {
+      padding:10px 20px;
+      border-radius:var(--r);
+      font-family:'Barlow Condensed';
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      cursor:pointer;
+      border:none;
+    }
+    .btn-send { background:var(--navy); color:#fff; }
+    .btn-clear { background:transparent; border:1.5px solid var(--bdr); }
+    .btn-send:hover { background:#254e80; }
+  </style>
 </head>
+
 <body>
-    <h1 style="color: navy;">This page is under construction</h1>
+
+<header>
+  ELMECH SYSTEMS — Ελλείψεις & Προμηθευτές
+</header>
+
+<main>
+  <h2>Συγκεντρωτική Λίστα Ελλείψεων</h2>
+  <div id="suppliers"></div>
+
+  <div class="actions">
+    <button class="btn-send" onclick="sendAll()">Συνολική Αποστολή σε Προμηθευτές</button>
+    <button class="btn-clear" onclick="clearAll()">Καθαρισμός Λίστας</button>
+  </div>
+</main>
+
+<script>
+/* ── Προμηθευτές ───────────────────────────── */
+const SUPPLIERS = [
+  { id:'SUP1', name:'HYDROTECH AE', email:'orders@hydrotech.gr',
+    products:['GRU-CM5-6-A','GRU-CM2-4-B','PMP-DW3-KIT'] },
+  { id:'SUP2', name:'VALVEMASTER EΠΕ', email:'sales@valvemaster.gr',
+    products:['VLV-GATE-DN50'] },
+  { id:'SUP3', name:'INDUSTRIAL PARTS SA', email:'info@indparts.gr',
+    products:['FIL-WF80-SS','CAB-PVC-25M'] }
+];
+
+/* ── Ελλείψεις (λαμβάνονται από localStorage) ── */
+/* Αναμενόμενη μορφή:
+   [{ code, desc, qty, orderId }]
+*/
+const RAW = JSON.parse(localStorage.getItem('SHORTAGES') || '[]');
+
+/* ── Merge ίδιων κωδικών ───────────────────── */
+const merged = {};
+RAW.forEach(p => {
+  if (!merged[p.code]) {
+    merged[p.code] = { ...p, qty:0, orders:[] };
+  }
+  merged[p.code].qty += p.qty;
+  merged[p.code].orders.push(p.orderId);
+});
+
+/* ── Group per supplier ───────────────────── */
+const groups = {};
+Object.values(merged).forEach(p => {
+  const sup = SUPPLIERS.find(s => s.products.includes(p.code));
+  const key = sup ? sup.id : 'OTHER';
+  if (!groups[key]) {
+    groups[key] = {
+      supplier: sup || { name:'Χωρίς Αντιστοίχιση', email:'—' },
+      items:[]
+    };
+  }
+  groups[key].items.push(p);
+});
+
+/* ── Render UI ─────────────────────────────── */
+const root = document.getElementById('suppliers');
+
+Object.values(groups).forEach(g => {
+  const div = document.createElement('div');
+  div.className = 'supplier';
+  div.innerHTML = `
+    <div class="supplier-header">
+      <span>${g.supplier.name}</span>
+      <span style="font-size:.8rem;color:#666">${g.supplier.email}</span>
+    </div>
+    <div class="supplier-items">
+      ${g.items.map(i => `
+        <div class="item">
+          <span class="code">${i.code}</span>
+          <span class="qty">${i.qty} τεμ.</span>
+        </div>
+      `).join('')}
+    </div>`;
+  root.appendChild(div);
+});
+
+/* ── Αποστολή (demo) ───────────────────────── */
+function sendAll() {
+  Object.values(groups).forEach(g => {
+    console.log('→ Αποστολή σε:', g.supplier.email);
+    g.items.forEach(i => {
+      console.log(i.code, i.qty, 'Παραγγελίες:', i.orders.join(', '));
+    });
+    console.log('----------------------------');
+  });
+  alert('✔ Η συνολική λίστα ελλείψεων απεστάλη (demo).');
+}
+
+/* ── Clear ─────────────────────────────────── */
+function clearAll() {
+  localStorage.removeItem('SHORTAGES');
+  location.reload();
+}
+</script>
+
 </body>
 </html>

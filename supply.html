@@ -7,45 +7,30 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
 
   <style>
     :root{
       --navy:#1a3a5f;
       --navy-dark:#112840;
-      --navy-mid:#254e80;
-      --navy-light:#3a6fa8;
       --accent:#e8a020;
-      --accent-dim:#b87d12;
-      --accent-bg:rgba(232,160,32,.1);
       --success:#1e7e4a;
-      --success-bg:#eaf5ee;
-      --danger:#c0392b;
-      --danger-bg:#fdf0ee;
+      --warning:#c88a16;
       --grey-bg:#eef1f5;
       --grey-bdr:#d8dfe8;
-      --grey-mid:#8a9ab0;
-      --white:#ffffff;
       --txt:#1c2b3a;
       --txt-soft:#5a6b7c;
-      --r:6px;
-      --sh-md:0 6px 24px rgba(26,58,95,.13);
-      --t:.22s ease;
+      --white:#fff;
     }
 
     *{box-sizing:border-box;margin:0;padding:0}
-    html{font-size:15px}
-
     body{
       font-family:'Barlow',sans-serif;
       background:var(--grey-bg);
       color:var(--txt);
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
     }
 
-    /* ── Topbar (ίδιο με Orders) ── */
+    /* ── TOPBAR (ΙΔΙΟ ΜΕ ΠΡΩΤΟ ΑΡΧΕΙΟ) ── */
     .topbar{
       background:var(--navy-dark);
       border-bottom:3px solid var(--accent);
@@ -54,8 +39,8 @@
       display:flex;
       align-items:center;
       gap:16px;
-      flex-shrink:0;
     }
+
     .logo{
       font-family:'Barlow Condensed',sans-serif;
       font-size:1.3rem;
@@ -66,6 +51,7 @@
       align-items:baseline;
       gap:10px;
     }
+
     .logo em{
       font-style:normal;
       font-size:.62rem;
@@ -74,6 +60,7 @@
       color:var(--accent);
       text-transform:uppercase;
     }
+
     .topbar-module{
       margin-left:auto;
       font-size:.72rem;
@@ -83,61 +70,44 @@
       color:rgba(255,255,255,.45);
     }
 
-    /* ── Page ── */
     main{
-      flex:1;
-      padding:32px 40px 56px;
       max-width:1100px;
-      width:100%;
       margin:auto;
+      padding:30px 40px;
     }
 
     h2{
       font-family:'Barlow Condensed',sans-serif;
+      margin-bottom:20px;
       font-size:1.3rem;
-      font-weight:700;
       color:var(--navy);
-      margin-bottom:18px;
     }
 
-    /* ── Supplier Card ── */
     .supplier{
-      background:var(--white);
-      border:1.5px solid var(--grey-bdr);
-      border-radius:var(--r);
-      box-shadow:var(--sh-md);
+      background:white;
+      border-radius:6px;
+      border:1px solid var(--grey-bdr);
       margin-bottom:18px;
-      overflow:hidden;
     }
 
     .supplier-header{
-      background:var(--grey-bg);
-      padding:14px 18px;
+      background:#f4f6f9;
+      padding:12px 16px;
       display:flex;
       justify-content:space-between;
-      align-items:center;
-    }
-
-    .supplier-header span:first-child{
-      font-family:'Barlow Condensed',sans-serif;
-      font-size:.95rem;
       font-weight:700;
+      font-size:.85rem;
       color:var(--navy);
-      letter-spacing:.05em;
-    }
-    .supplier-header span:last-child{
-      font-size:.75rem;
-      color:var(--txt-soft);
     }
 
     .supplier-items{
-      padding:14px 18px;
+      padding:12px 16px;
     }
 
     .item{
       display:flex;
-      justify-content:space-between;
       align-items:center;
+      gap:14px;
       padding:6px 0;
       font-size:.85rem;
       border-bottom:1px dashed var(--grey-bdr);
@@ -145,59 +115,57 @@
     .item:last-child{border-bottom:none}
 
     .code{
+      width:170px;
       font-family:'Barlow Condensed',sans-serif;
       font-weight:700;
-      letter-spacing:.03em;
-      color:var(--navy);
-    }
-    .qty{
-      font-size:.8rem;
-      color:var(--txt-soft);
     }
 
-    /* ── Actions ── */
+    .qty{color:var(--txt-soft)}
+
+    .btn-select{
+      margin-left:auto;
+      padding:5px 12px;
+      font-size:.65rem;
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700;
+      border-radius:4px;
+      border:1px solid var(--grey-bdr);
+      cursor:pointer;
+      background:white;
+    }
+
+    .item.pending{background:#fff6e6}
+    .item.pending .btn-select{
+      background:var(--navy);
+      color:white;
+      border:none;
+    }
+
+    .item.sent{opacity:.55}
+    .item.sent .code{text-decoration:line-through}
+
     .actions{
       margin-top:24px;
       display:flex;
-      gap:12px;
-      flex-wrap:wrap;
+      gap:14px;
     }
-    .btn{
-      display:inline-flex;
-      align-items:center;
+
+    .actions button{
       padding:10px 22px;
-      border-radius:var(--r);
       font-family:'Barlow Condensed',sans-serif;
-      font-size:.9rem;
       font-weight:700;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      cursor:pointer;
+      border-radius:6px;
       border:none;
-      transition:all var(--t);
+      cursor:pointer;
+      text-transform:uppercase;
+      letter-spacing:.04em;
     }
-    .btn-send{
-      background:var(--navy);
-      color:var(--white);
-    }
-    .btn-send:hover{
-      background:var(--navy-mid);
-      box-shadow:0 4px 14px rgba(26,58,95,.3);
-      transform:translateY(-1px);
-    }
-    .btn-clear{
-      background:transparent;
-      border:1.5px solid var(--grey-bdr);
-      color:var(--txt-soft);
-    }
-    .btn-clear:hover{
-      background:var(--grey-bg);
-      border-color:var(--grey-mid);
-    }
+
+    .send{background:var(--navy);color:white}
+    .clear{background:white;border:1px solid var(--grey-bdr)}
 
     @media (max-width:580px){
       .topbar{padding:0 20px}
-      main{padding:24px 20px 40px}
     }
   </style>
 </head>
@@ -218,39 +186,36 @@
   <div id="suppliers"></div>
 
   <div class="actions">
-    <button class="btn btn-send" onclick="sendAll()">
-      Συνολική Αποστολή σε Προμηθευτές
-    </button>
-    <button class="btn btn-clear" onclick="clearAll()">
-      Καθαρισμός Λίστας
-    </button>
+    <button class="send" onclick="sendAll()">Συνολική Αποστολή</button>
+    <button class="clear" onclick="clearAll()">Καθαρισμός</button>
   </div>
 </main>
 
 <script>
-/* ── Προμηθευτές ───────────────────────────── */
-const SUPPLIERS = [
-  { id:'SUP1', name:'HYDROTECH AE', email:'orders@hydrotech.gr',
-    products:['GRU-CM5-6-A','GRU-CM2-4-B','PMP-DW3-KIT'] },
-  { id:'SUP2', name:'VALVEMASTER EΠΕ', email:'sales@valvemaster.gr',
-    products:['VLV-GATE-DN50'] },
-  { id:'SUP3', name:'INDUSTRIAL PARTS SA', email:'info@indparts.gr',
-    products:['FIL-WF80-SS','CAB-PVC-25M'] }
+/* Demo shortages */
+if(!localStorage.getItem('SHORTAGES')){
+  localStorage.setItem('SHORTAGES', JSON.stringify([
+    { code:'GRU-CM5-6-A', qty:5 },
+    { code:'PMP-DW3-KIT', qty:1 },
+    { code:'VLV-GATE-DN50', qty:4 },
+    { code:'FIL-WF80-SS', qty:6 }
+  ]));
+}
+
+const SUPPLIERS=[
+  {id:'S1',name:'HYDROTECH AE',email:'orders@hydrotech.gr',products:['GRU-CM5-6-A','PMP-DW3-KIT']},
+  {id:'S2',name:'VALVEMASTER ΕΠΕ',email:'sales@valvemaster.gr',products:['VLV-GATE-DN50']},
+  {id:'S3',name:'INDUSTRIAL PARTS SA',email:'info@indparts.gr',products:['FIL-WF80-SS']}
 ];
 
-const RAW = JSON.parse(localStorage.getItem('SHORTAGES') || '[]');
+const RAW=JSON.parse(localStorage.getItem('SHORTAGES')||'[]');
 
-/* ── Merge ── */
-const merged = {};
+const merged={};
 RAW.forEach(p=>{
-  if(!merged[p.code]){
-    merged[p.code]={...p,qty:0,orders:[]};
-  }
+  if(!merged[p.code]) merged[p.code]={code:p.code,qty:0,status:'idle'};
   merged[p.code].qty+=p.qty;
-  merged[p.code].orders.push(p.orderId);
 });
 
-/* ── Group ── */
 const groups={};
 Object.values(merged).forEach(p=>{
   const sup=SUPPLIERS.find(s=>s.products.includes(p.code));
@@ -261,7 +226,6 @@ Object.values(merged).forEach(p=>{
   groups[key].items.push(p);
 });
 
-/* ── Render ── */
 const root=document.getElementById('suppliers');
 Object.values(groups).forEach(g=>{
   const div=document.createElement('div');
@@ -273,19 +237,39 @@ Object.values(groups).forEach(g=>{
     </div>
     <div class="supplier-items">
       ${g.items.map(i=>`
-        <div class="item">
+        <div class="item" data-code="${i.code}">
           <span class="code">${i.code}</span>
           <span class="qty">${i.qty} τεμ.</span>
+          <button class="btn-select" onclick="toggleSelect('${i.code}')">
+            Προς Αποστολή
+          </button>
         </div>
       `).join('')}
     </div>`;
   root.appendChild(div);
 });
 
-/* ── Actions ── */
-function sendAll(){
-  alert('✔ Η συνολική λίστα ελλείψεων απεστάλη (demo).');
+function toggleSelect(code){
+  const item=Object.values(merged).find(i=>i.code===code);
+  const row=document.querySelector(`.item[data-code="${code}"]`);
+  if(item.status==='idle'){item.status='pending';row.classList.add('pending')}
+  else{item.status='idle';row.classList.remove('pending')}
 }
+
+function sendAll(){
+  const toSend=Object.values(merged).filter(i=>i.status==='pending');
+  if(!toSend.length){alert('Δεν υπάρχουν επιλεγμένα προϊόντα.');return;}
+  toSend.forEach(i=>{
+    i.status='sent';
+    const row=document.querySelector(`.item[data-code="${i.code}"]`);
+    row.classList.remove('pending');
+    row.classList.add('sent');
+    row.querySelector('button').disabled=true;
+    row.querySelector('button').innerText='Στάλθηκε';
+  });
+  alert('✔ Η αποστολή ολοκληρώθηκε (demo).');
+}
+
 function clearAll(){
   localStorage.removeItem('SHORTAGES');
   location.reload();

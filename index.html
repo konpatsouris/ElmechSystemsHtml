@@ -7,7 +7,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -15,7 +15,7 @@
   --navy-dark:#112840;
   --navy-mid:#254e80;
   --navy-light:#3a6fa8;
-  --accent:eef1f5;
+  --accent: #e8a020;;
   --grey-bg:#eef1f5;
   --grey-bdr:#d8dfe8;
   --txt:#1c2b3a;
@@ -25,6 +25,7 @@
   --sh-md:0 6px 24px rgba(26,58,95,.13);
   --t:.22s ease;
 }
+    html { font-size: 15px; }
 
 *{box-sizing:border-box;margin:0;padding:0}
 
@@ -38,29 +39,33 @@ body{
 }
 
 /* ── Top Bar (ίδια με orders) ── */
-.topbar{
-  height:60px;
-  background:var(--navy-dark);
-  border-bottom:3px solid var(--accent);
-  padding:0 40px;
-  display:flex;
-  align-items:center;
+.topbar {
+    background: var(--navy-dark);
+    border-bottom: 3px solid var(--accent);
+    padding: 0 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
 }
-.logo{
-  font-family:'Barlow Condensed';
-  font-size:1.3rem;
-  font-weight:800;
-  letter-spacing:.08em;
-  color:white;
+.logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: var(--white);
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
 }
-.logo em{
-  font-style:normal;
-  font-size:.62rem;
-  font-weight:500;
-  letter-spacing:.2em;
-  color:var(--accent);
-  margin-left:8px;
-  text-transform:uppercase;
+.logo em {
+    font-style: normal;
+    font-size: .62rem;
+    font-weight: 500;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-transform: uppercase;
 }
 
 /* ── Page wrapper ── */
